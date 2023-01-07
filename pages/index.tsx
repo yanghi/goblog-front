@@ -1,11 +1,12 @@
 import Head from 'next/head'
 import { Inter } from '@next/font/google'
 import styles from '../styles/Home.module.css'
-import poststyles from './create/my-post/style.module.less'
 import { GetServerSidePropsContext } from 'next'
 import { postService } from '../service/post'
 import Header from '../components/layout/header'
-import { Avatar, Tag } from 'antd'
+import { Pagination } from 'antd'
+import PostCard from '../components/post/card'
+import { usePagination } from '../hooks/usePagination'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,8 +19,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ id
 }
 
 export default function Home(props: any) {
-  console.log(`Home `, props.data)
-  const { data } = props
+
+  const { data, pagination } = usePagination(postService.getPostList, { auto: false, initialData: props.data })
+
   return (
     <>
       <Head>
@@ -34,24 +36,12 @@ export default function Home(props: any) {
         <div>
           {
             data.list.map((post: any) => {
-              return <div key={post.id} className={poststyles.postItem}>
-                <h4>{post.title}</h4>
-                <p>
-                  <Avatar src={post.author?.avatar}>{!post.author?.avatar && post.author?.name[0]}</Avatar>
-                  <span style={{ marginLeft: 10 }}>
-                    {post.author?.name || "用户已注销"}
-                  </span>
-                </p>
-                <div>
-                  <span className={poststyles.postTime}>{post.create_time}</span>
-                </div>
-                <p>{post.description}</p>
-                <div>
-                  {post.tagList.map((tag: any) => <Tag key={tag.id} className={poststyles.tagItem}>{tag.name}</Tag>)}
-                </div>
-              </div>
+              return <PostCard key={post.id} post={post}></PostCard>
             })
           }
+        </div>
+        <div className={styles.pagination}>
+          <Pagination pageSize={pagination.pageSize} defaultCurrent={1} onChange={pagination.onChange} total={pagination.total} />
         </div>
       </main>
     </>

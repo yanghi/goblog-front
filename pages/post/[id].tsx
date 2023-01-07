@@ -10,7 +10,19 @@ import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 // @ts-ignore
 import { oneLight } from 'react-syntax-highlighter/dist/cjs/styles/prism'
-
+import Header from "../../components/layout/header";
+import { useMounted } from "../../hooks/useMouted";
+import { Avatar, Button, Dropdown, message, Space, Tag } from "antd";
+import classname from 'classname'
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
+import { UserState } from "../../store/user/userSlice";
+import { getPostStatuText, PostStatu, PostStatuOptions } from "../../struct/post";
+import { DownOutlined, EditOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
+import { useState } from "react";
+import { useSetState } from "ahooks";
+import { ItemType } from "antd/es/menu/hooks/useItems";
 const inter = Inter({ subsets: ['latin'] })
 
 
@@ -18,13 +30,37 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ id
 
   let params = context.params
 
-  const res = await postService.getPost(Number(params?.id))
+  let id = Number(params?.id)
+  let token = context.req.cookies.token
 
-  return { props: { data: res.data.data } }
+  const res = await postService.getPost(id, token)
+
+  return { props: { data: res.data.data, id } }
 }
 
-export default function Post(props: { data: any }) {
-  const postData = props.data
+export default function Post(props: { data: any, id: number }) {
+  const [postData, setpostData] = useSetState(props.data)
+  const { id } = props
+
+  const user = useSelector<RootState, UserState>((state) => state.user)
+
+  const isMyPost = postData?.authorId == user.user.id
+
+  const chageStatu = (statu: PostStatu) => {
+    postService.modifiyPost({
+      id: postData.id,
+      statu
+    }).then(() => {
+      message.success(`设为${getPostStatuText(statu)}成功`)
+      setpostData({ statu })
+    }).catch(() => {
+      message.error('修改失败')
+    })
+  }
+
+  useMounted(() => {
+    postData && postService.actionView(id)
+  })
 
   if (!postData) {
     return <div>
@@ -45,17 +81,51 @@ export default function Post(props: { data: any }) {
     <>
       <Head>
         <title>{postData.title}</title>
-        <meta name="description" content={postData.title} />
+        <meta name="title" content={postData.title} />
+        <meta name="description" content={postData.description} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Header></Header>
+
       <main className={style.main}>
-        <h2 className={inter.className}>
+        <h2 className={classname([inter.className, style.title])}>
           {postData.title}
         </h2>
-        <div>
-          <div className={style.user_name}>{postData.author.name}</div>
-          <time className={style.time}>{postData.create_time}</time>
+        <div className={style.postInfo}>
+          {postData.tagList?.map((tag: any) => <Tag key={tag.id}>{tag.name}</Tag>)}
+          <span>阅读量:&nbsp;{postData.view}</span>
+          {isMyPost &&
+            <div className={style.opration}>
+              <span>状态: {getPostStatuText(postData.statu)}</span>
+              <Dropdown menu={{
+                selectedKeys: [postData.statu],
+                onClick(e) {
+                  chageStatu(parseInt(e.key))
+                },
+                items: PostStatuOptions.map(it => ({ icon: it.value == PostStatu.Public ? <EyeOutlined /> : <EyeInvisibleOutlined style={{ marginRight: 2 }} />, label: it.label, key: it.value, disabled: postData.statu == it.value }))
+              }}>
+                <a onClick={(e) => e.preventDefault()}>
+                  <Space>
+                    修改状态
+                    <DownOutlined />
+                  </Space>
+                </a>
+              </Dropdown>
+              <Button type='link' icon={<EditOutlined />} onClick={() => {
+                window.location.href = '/create/edit/' + postData.id
+              }}>编辑</Button>
+            </div>
+          }
+        </div>
+        <div className={style.user_info}>
+          <Avatar style={{ width: 32, height: 32 }} className={style.user_avtar} src={postData.author?.avatar}>
+            {!postData.author?.avatar && postData.author?.name[0]}
+          </Avatar>
+          <div>
+            <div className={style.user_name}>{postData.author?.name}</div>
+            <time className={style.time}>发布于:&nbsp;{postData.create_time}</time>
+          </div>
         </div>
         <article className={style.article}>
           {/* {postData.content} */}

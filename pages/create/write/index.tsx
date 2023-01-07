@@ -21,6 +21,11 @@ export default function Write(props: {
 }) {
   const { editData, edit } = props;
 
+  useMounted(() => {
+    if (editData) {
+      window.localStorage.setItem('edit_post', JSON.stringify(editData));
+    }
+  })
 
   const [state, setState] = useLocalStorageState<PostData>(
     edit ? 'edit_post' : 'post',
@@ -32,7 +37,7 @@ export default function Write(props: {
     }
   )
 
-  const editMode = edit || !!state.id
+  const editMode = edit || (state && !!state.id)
 
   const createPost = useRequest(postService.createPost, {
     manual: true
@@ -52,7 +57,10 @@ export default function Write(props: {
       createPost.runAsync(v).then(res => {
         console.log(res);
         message.success('保存成功')
-        setState((s: any) => ({ ...s, id: res.data.data.id }))
+        setState({ title: '', content: '' })
+        setTimeout(() => {
+          window.location.replace('/create/edit/' + res.data.data.id)
+        }, 100);
       })
     }
   }
@@ -67,6 +75,9 @@ export default function Write(props: {
     }
   })
 
+  if (!state) {
+    return <></>
+  }
   return <>
     <Head>
       <title>写作</title>

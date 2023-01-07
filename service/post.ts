@@ -1,16 +1,19 @@
+import { PaginationParams } from './../struct/api';
 import { request } from "../utils/request";
 
 class PostService {
-  getPostList() {
+  getPostList(params?: PaginationParams) {
     return request({
       method: 'get',
-      url: 'v1/post/list'
+      url: 'v1/post/list',
+      params
     })
   }
-  getMyPostList() {
+  getMyPostList(params?: PaginationParams) {
     return request({
       method: 'get',
-      url: 'v1/user/post/list'
+      url: 'v1/user/post/list',
+      params
     })
   }
 
@@ -23,12 +26,15 @@ class PostService {
       }
     })
   }
-  getPost(id: number) {
+  getPost(id: number, token?: string) {
     return request({
       url: 'v1/post/post',
       method: 'get',
       params: {
         id
+      },
+      headers: {
+        "Authorization": token
       }
     })
   }
@@ -44,6 +50,13 @@ class PostService {
       url: 'v1/post/post',
       method: 'put',
       data: params
+    })
+  }
+  actionView(id: number) {
+    return request({
+      url: 'v1/post/action/view',
+      method: 'put',
+      params: { id }
     })
   }
 }

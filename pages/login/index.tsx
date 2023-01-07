@@ -1,5 +1,6 @@
-import { Button, Form, Input } from 'antd'
+import { Button, Form, Input, message } from 'antd'
 import Head from 'next/head'
+import { useApi } from '../../hooks/useApi';
 import { authService } from '../../service/auth';
 import style from './style.module.less'
 
@@ -7,9 +8,21 @@ import style from './style.module.less'
 export default function Login() {
   const [form] = Form.useForm();
 
+  const { fetch, loading } = useApi(authService.login, { auto: false })
+
   const onFinish = (values: any) => {
     console.log(values);
-    authService.login(values)
+
+    fetch(values).then((res) => {
+      const data = res.data
+
+      if (data.data.user) {
+        message.success(`欢迎回来, ${data.data.user.name}`)
+      }
+      setTimeout(() => {
+        window.location.href = '/'
+      }, 1000);
+    })
   };
 
 
@@ -42,7 +55,7 @@ export default function Login() {
             <Input.Password />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" block onClick={() => {
+            <Button loading={loading} type="primary" block onClick={() => {
               form.submit()
             }}>Submit</Button>
           </Form.Item>

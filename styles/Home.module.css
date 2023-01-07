@@ -1,8 +1,4 @@
 .main {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
@@ -277,4 +273,7 @@
   to {
     transform: rotate(0deg);
   }
+}
+.pagination {
+  margin: 10px 0;
 }
