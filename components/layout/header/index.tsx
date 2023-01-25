@@ -20,6 +20,7 @@ const Header: React.FC<HeaderProps> = (props) => {
     <div className={style.left}>
       <div className={style.banner}></div>
       <Link href={'/'}>首页</Link>
+      <Link href={'/feed/reader'}>RSS订阅</Link>
       {user.logged && <>
         {/* <Link href={'/create'}>我的创作</Link> */}
         <Link href={'/create/my-post'}>我的文章</Link>

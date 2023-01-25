@@ -109,6 +109,6 @@ export const usePagination = <
 
 type PaginationInfo = Required<PaginationParams>
 type PaginationApiAction =
-  | ((params: PaginationInfo, ...arg: any[]) => Promise<any>)
-  | ((params: PaginationParams, ...arg: any[]) => Promise<any>)
+  | ((params: PaginationParams & Record<any, any>, ...arg: any[]) => Promise<any>)
+  | ((params: any, ...arg: any[]) => Promise<any>)
 type PromiseValue<F extends Function> = F extends (...args: any[]) => Promise<infer V> ? V : never
