@@ -3,10 +3,10 @@ import { Inter } from '@next/font/google'
 import styles from '../styles/Home.module.css'
 import { GetServerSidePropsContext } from 'next'
 import { postService } from '../service/post'
-import Header from '../components/layout/header'
 import { Pagination } from 'antd'
 import PostCard from '../components/post/card'
 import { usePagination } from '../hooks/usePagination'
+import Layout from '../components/layout'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -30,9 +30,8 @@ export default function Home(props: any) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header></Header>
-      <main className={styles.main}>
-        <h4>最新文章</h4>
+      <Layout>
+        <h4 className={styles.title}>最新文章</h4>
         <div>
           {
             data.list.map((post: any) => {
@@ -43,7 +42,7 @@ export default function Home(props: any) {
         <div className={styles.pagination}>
           <Pagination pageSize={pagination.pageSize} defaultCurrent={1} onChange={pagination.onChange} total={pagination.total} />
         </div>
-      </main>
+      </Layout>
     </>
   )
 }

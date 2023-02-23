@@ -33,7 +33,7 @@ export default function Login() {
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link rel="icon" href="/favicon.ico" />
     </Head>
-    <main>
+    <main className={style.wrap}>
       <div className={style.form}>
 
         <h3 className={style.form_title}>

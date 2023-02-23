@@ -1,14 +1,19 @@
 .header {
   height: 56px;
   line-height: 56px;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: var(--purple);
+  color: white;
   padding-block: 0;
   padding-inline: 8px;
   border-bottom: 1px solid #f0f0f0;
-  display: flex;
-
-  justify-content: space-between;
   box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
+}
+
+.headerInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
 }
 
 .banner {
@@ -20,10 +25,11 @@
 
   >a {
     margin-right: 10px;
-    color: #333;
+    color: white;
+    transform: all 0.3s;
 
     &:hover {
-      color: #1677ff;
+      text-decoration: underline;
     }
   }
 }

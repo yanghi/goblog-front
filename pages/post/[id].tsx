@@ -23,6 +23,7 @@ import { DownOutlined, EditOutlined, EyeInvisibleOutlined, EyeOutlined } from '@
 import { useState } from "react";
 import { useSetState } from "ahooks";
 import { ItemType } from "antd/es/menu/hooks/useItems";
+import Layout from "../../components/layout";
 const inter = Inter({ subsets: ['latin'] })
 
 
@@ -86,9 +87,7 @@ export default function Post(props: { data: any, id: number }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header></Header>
-
-      <main className={style.main}>
+      <Layout>
         <h2 className={classname([inter.className, style.title])}>
           {postData.title}
         </h2>
@@ -150,7 +149,7 @@ export default function Post(props: { data: any, id: number }) {
             }}
             remarkPlugins={[remarkGfm]}>{postData.content}</ReactMarkdown>
         </article>
-      </main>
+      </Layout>
     </>
   )
 }

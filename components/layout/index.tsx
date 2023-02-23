@@ -1,6 +1,6 @@
 import React from 'react'
 import Header from './header'
-import './index.less'
+import style from './index.module.less'
 
 
 export interface LayoutProps {
@@ -11,14 +11,12 @@ const Layout: React.FC<LayoutProps> = (props) => {
 
   const { children } = props
 
-
-
-  return <>
+  return <div className={style.layout}>
     <Header></Header>
-    <div className='layout-main'>
+    <div className={style.layoutMain}>
       {children}
     </div>
-  </>
+  </div>
 }
 
 export default Layout
